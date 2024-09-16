@@ -11,47 +11,46 @@ private let reuseIdentifier = "CollectCell"
 
 class CollectionViewController: UICollectionViewController {
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-
-
-        // Register cell classes
-        //self.collectionView!.register(UICollectionViewCell.self, forCellWithReuseIdentifier: reuseIdentifier)
-
-        
-    }
-    lazy var imageModel = {
+    // For Lazy loading of the image model instance
+    lazy var imageModel: ImageModel = {
         return ImageModel.sharedInstance()
     }()
 
-    // MARK: UICollectionViewDataSource
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        // Uncomment the line below if you want to register a cell class programmatically
+        // self.collectionView!.register(UICollectionViewCell.self, forCellWithReuseIdentifier: reuseIdentifier)
+    }
+
+    // MARK: - UICollectionViewDataSource
 
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
     }
 
-
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return self.imageModel.imageNames.count
+        // Use the model's numberOfImages method to get the count
+        return self.imageModel.numberOfImages()
     }
 
-    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath:IndexPath) -> UICollectionViewCell {
+    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
         if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as? CollectionViewCell {
-           
-            if let name = self.imageModel.imageNames[indexPath.row] as? String {
-                
-                cell.imageView.image = self.imageModel.getImageWithName(name)
-            }
+            
+            let name = self.imageModel.getImageName(for: indexPath.row)
+            
+            // Use getImageWithName to fetch the correct image
+            cell.imageView.image = self.imageModel.getImageWithName(name)
             
             return cell
-        }else{
-            fatalError("Could not deqeue cell")
+        } else {
+            fatalError("Could not dequeue cell")
         }
     }
 
-    // MARK: UICollectionViewDelegate
+
+    // MARK: - UICollectionViewDelegate
 
     /*
     // Uncomment this method to specify if the specified item should be highlighted during tracking
@@ -81,5 +80,4 @@ class CollectionViewController: UICollectionViewController {
     
     }
     */
-
 }
